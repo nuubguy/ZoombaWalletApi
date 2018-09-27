@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>assignment-04</artifactId>
+	<artifactId>wallet-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>assignment-04</name>
-	<description>Demo project for Spring Boot</description>
+	<name>wallet-api</name>
+	<description>Wallet API</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
