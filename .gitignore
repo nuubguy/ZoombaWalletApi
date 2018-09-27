@@ -1,0 +1,6 @@
+#OS files
+.DS_Store
+#Dev tmp files
+**/.idea/*
+**/out/*
+**/target/*

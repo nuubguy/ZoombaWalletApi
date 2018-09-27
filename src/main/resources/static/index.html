@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Wallet</title>
+</head>
+<body>
+<h1><span><label id="walletInfo"></label></span> Wallet</h1>
+<h2>Balance: <span><label id="balance"></label></span></h2>
+<br>
+<h3>Amount: <span><input type="number" id="amount" min="1">
+<select id="type">
+  <option value="credit">Credit</option>
+  <option value="debit">Debit</option>
+</select><input type="button" id="submit" value="Submit"></span></h3>
+<br>
+<label id="status"></label>
+<br>
+<br>
+<table id="transactionList">
+    <caption>Last 5 transactions</caption>
+    <thead>
+    <tr>
+        <th>Transaction Id</th>
+        <th>Transaction Type</th>
+        <th>Amount</th>
+        <th>Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+</body>
+<script src="dist/main.bundle.js" type="application/javascript"></script>
+</html>
