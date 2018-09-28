@@ -50,7 +50,7 @@ public class AccountsService extends BaseService<Account> {
         return idPrefix;
     }
 
-    private Account getById(String id) {
+    public Account getById(String id) {
         Optional<Account> result = this.accountsRepository.findById(id);
         if(!result.isPresent()) throw new InvalidAccountException();
         return result.get();
@@ -71,6 +71,8 @@ public class AccountsService extends BaseService<Account> {
 
         return account.getBalance();
     }
+
+
 
 
     public void updateBalance(Account accountWithNewBalance) {
