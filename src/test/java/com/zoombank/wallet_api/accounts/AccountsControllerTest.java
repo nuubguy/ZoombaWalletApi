@@ -64,12 +64,12 @@ public class AccountsControllerTest {
     public void get_expectAccountWithBalance5Mil() throws Exception {
         Customer createdCustomer = createCustomer1InTheRepository();
         Account anAccount = createAccountWith5MilBalanceInRepository(createdCustomer);
-        String urlTemplate = "/customers/" + createdCustomer.getCustomerId() + "/accounts/" + anAccount.getAccountId() + "/balance";
+        String urlTemplate = "/customers/" + createdCustomer.getCustomerId() + "/accounts/" + anAccount.getAccountId();
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate))
                 .andExpect(status().isOk()).andDo(print()).andReturn();
 
-        Money balance = objectMapper.readValue(result.getResponse().getContentAsString(), Money.class);
-        assertEquals(Double.valueOf("5000000"), balance.getAmount(),0);
+        Account account = objectMapper.readValue(result.getResponse().getContentAsString(), Account.class);
+        assertEquals(Double.valueOf("5000000"), account.getBalance().getAmount(),0);
     }
 
     @Test

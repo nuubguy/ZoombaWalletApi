@@ -21,9 +21,10 @@ public class AccountsController {
         return new ResponseEntity(createdAccount, HttpStatus.CREATED);
     }
 
-    @GetMapping("/customers/{customerId}/accounts/{accountId}/balance")
-    public ResponseEntity create(@PathVariable String customerId, @PathVariable String accountId) {
-        Money balance = this.accountsService.getBalance(customerId, accountId);
-        return new ResponseEntity(balance, HttpStatus.OK);
+
+    @GetMapping("/customers/{customerId}/accounts/{accountId}")
+    public ResponseEntity fetchUser (@PathVariable String customerId,@PathVariable String accountId) {
+        Account account = accountsService.getById(accountId);
+        return new ResponseEntity(account, HttpStatus.OK);
     }
 }
