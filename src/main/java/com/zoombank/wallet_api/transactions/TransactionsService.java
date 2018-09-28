@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -104,18 +103,12 @@ public class TransactionsService extends BaseService<Transaction> {
     }
 
     public List<Transaction> fetchAllByAccount(String accountId) {
-        List<Transaction> collect = new ArrayList<>();
-        for (Transaction transaction : this.transactionsRepository.findAll()) {
-            if (transaction.getDebit().getAccountId().equals(accountId) || transaction.getCredit().getAccountId().equals(accountId)) {
-                collect.add(transaction);
-            }
-        }
-        return collect;
+        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountId(accountId, accountId);
 
     }
 
     public List<Transaction> fetchLatestByAccount(String accountId, Integer limitResultFromLatest){
-        return this.transactionsRepository.fecthLatestByAccountId(accountId, PageRequest.of(0,limitResultFromLatest)).getContent();
+        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdOrderByDateTimeDesc(accountId, accountId, PageRequest.of(0,limitResultFromLatest)).getContent();
 
     }
 }
