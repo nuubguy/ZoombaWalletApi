@@ -15,12 +15,14 @@ public class TransactionsController {
     @Autowired
     private TransactionsService transactionsService;
 
+    @CrossOrigin
     @PostMapping
     public ResponseEntity create(@RequestBody Transaction aTransaction){
         Transaction createdTransaction = transactionsService.create(aTransaction);
         return new ResponseEntity(createdTransaction, HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @GetMapping
     public ResponseEntity get(@RequestParam(value = "accountId") String accountId, @RequestParam(value = "limitResultFromLatest", required = false) Integer limitResultFromLatest) {
         if (limitResultFromLatest != null){

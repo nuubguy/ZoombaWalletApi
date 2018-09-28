@@ -8,6 +8,7 @@ import com.zoombank.wallet_api.customers.Customer;
 import com.zoombank.wallet_api.customers.CustomersRepository;
 import com.zoombank.wallet_api.customers.CustomersService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.coyote.Response;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -68,6 +70,23 @@ public class TransactionsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(transferMoney)))
                 .andExpect(status().isCreated()).andDo(print());
+    }
+
+    @Test
+    public void create_expectStatus201_andHaveDescription() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        Account account2 = createAccount2With5MilBalanceInRepository();
+        Transaction transferMoney = new Transaction(account1,account2, Money.indonesianRupiah(1000000));
+        transferMoney.setDescription("Beli mobil");
+
+        MvcResult result =  this.mockMvc.perform(post("/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(transferMoney)))
+                .andExpect(status().isCreated())
+                .andDo(print())
+                .andReturn();
+
+        assertTrue(result.getResponse().getContentAsString().contains("Beli mobil"));
     }
 
     @Test

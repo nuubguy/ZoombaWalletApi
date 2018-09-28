@@ -15,12 +15,14 @@ public class CustomersController {
     @Autowired
     private CustomersService customersService;
 
+    @CrossOrigin
     @PostMapping
     public ResponseEntity create(@RequestBody Customer aCustomer){
         Customer createdCustomer = this.customersService.create(aCustomer);
         return new ResponseEntity(createdCustomer, HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable String id, @RequestBody Customer aCustomer) {
         aCustomer.setCustomerId(id);
@@ -28,12 +30,14 @@ public class CustomersController {
         return new ResponseEntity(updatedCustomer, HttpStatus.ACCEPTED);
     }
 
+    @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable String id) {
         this.customersService.delete(id);
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 
+    @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity fetch(@PathVariable String id) {
         return new ResponseEntity(customersService.getById(id), HttpStatus.OK);
