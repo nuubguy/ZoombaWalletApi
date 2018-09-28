@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WalletAPI {
+public class WebAPI {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WalletAPI.class, args);
+		SpringApplication.run(WebAPI.class, args);
 	}
 }

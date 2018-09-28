@@ -69,7 +69,7 @@ public class AccountsControllerTest {
                 .andExpect(status().isOk()).andDo(print()).andReturn();
 
         Account account = objectMapper.readValue(result.getResponse().getContentAsString(), Account.class);
-        assertEquals(Double.valueOf("5000000"), account.getBalance().getAmount(),0);
+        Assert.assertEquals(Double.valueOf("5000000"), account.getBalance().getAmount(),0);
     }
 
     @Test

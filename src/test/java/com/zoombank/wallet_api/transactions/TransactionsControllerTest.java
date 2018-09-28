@@ -141,10 +141,7 @@ public class TransactionsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andDo(print()).andReturn();
 
-        System.out.println("check1"+objectMapper.writeValueAsString(transactionsRepository.findAll()));
-        System.out.println("check2"+result.getResponse().getContentAsString());
-
-        assertEquals(objectMapper.writeValueAsString(transactionsRepository.findAll()), objectMapper.writeValueAsString(transactionsRepository.findAll()));
+        assertEquals(objectMapper.writeValueAsString(transactionsRepository.findAll()), result.getResponse().getContentAsString());
 
     }
 
@@ -177,11 +174,7 @@ public class TransactionsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andDo(print()).andReturn();
 
-        System.out.println("check"+objectMapper.writeValueAsString(transactions));
-        System.out.println("check2"+result.getResponse().getContentAsString());
-
-
-        assertEquals(objectMapper.writeValueAsString(transactions), objectMapper.writeValueAsString(transactions));
+        assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
 
     }
 

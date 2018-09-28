@@ -73,8 +73,6 @@ public class AccountsService extends BaseService<Account> {
     }
 
 
-
-
     public void updateBalance(Account accountWithNewBalance) {
         this.accountsRepository.save(accountWithNewBalance);
     }
