@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Currency;
 
@@ -42,6 +43,10 @@ public class Transaction {
     @Column
     @NotNull
     private LocalDateTime dateTime;
+
+    @Column
+    @Size(max = 15)
+    private String description = "";
 
     public Transaction(){
 
@@ -97,5 +102,13 @@ public class Transaction {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

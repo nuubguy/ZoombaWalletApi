@@ -14,12 +14,14 @@ public class AccountsController {
     @Autowired
     AccountsService accountsService;
 
+    @CrossOrigin
     @PostMapping("/customers/{id}/accounts")
     public ResponseEntity create(@PathVariable String id, @RequestBody Account account) {
         Account createdAccount = accountsService.create(id, account);
         return new ResponseEntity(createdAccount, HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @GetMapping("/customers/{customerId}/accounts/{accountId}")
     public ResponseEntity create(@PathVariable String customerId, @PathVariable String accountId) {
         Account account = this.accountsService.getById(accountId);
