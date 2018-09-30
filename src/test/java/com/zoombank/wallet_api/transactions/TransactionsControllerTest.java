@@ -242,7 +242,7 @@ public class TransactionsControllerTest {
 
 
     @Test
-    public void get_expectTransactionContainADescription_WhenApplyFilterForADescription() throws Exception {
+    public void get_expectTransactionEqualAmount_WhenApplyFilterForAAmount() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
         List<Transaction> transactions = new ArrayList<>();
@@ -260,16 +260,33 @@ public class TransactionsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andDo(print()).andReturn();
 
-        System.out.println("check"+result.getResponse().getContentAsString());
-        System.out.println("check"+objectMapper.writeValueAsString(transactions));
-
-
         assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
-
     }
 
     @Test
-    public void get_expectTransactionEqualToAmountInput_WhenApplyFilterForADescription() throws Exception {
+    public void get_expectTransactionEqualDescriptionAmountAnd_WhenApplyFilterForAAmount() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        Account account2 = createAccount2With5MilBalanceInRepository();
+        List<Transaction> transactions = new ArrayList<>();
+
+        //create transactions
+        Transaction trx6 = new Transaction(account1, account2, Money.indonesianRupiah(500000));
+        trx6.setDescription("Beli mobil Baru");
+
+        trx6 = transactionsService.create(trx6);
+
+        transactions.add(trx6);
+
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=5&amount=500000" +
+                "&description=Beli mobil Baru")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void get_expectTransactionEqualToDescriptionInput_WhenApplyFilterForADescription() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
         List<Transaction> transactions = new ArrayList<>();
