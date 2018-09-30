@@ -19,19 +19,35 @@ public class TransactionsController {
 
     @CrossOrigin
     @PostMapping
-    public ResponseEntity create(@Valid @RequestBody TransactionTransferObject aTransaction){
+    public ResponseEntity create(@Valid @RequestBody TransactionRepresentation aTransaction){
         Transaction createdTransaction = transactionsService.create(Transaction.createFromTransferObject(aTransaction));
         return new ResponseEntity(createdTransaction, HttpStatus.CREATED);
     }
 
     @CrossOrigin
     @GetMapping
-    public ResponseEntity get(@RequestParam(value = "accountId") String accountId, @RequestParam(value = "limitResultFromLatest", required = false) Integer limitResultFromLatest) {
+    public ResponseEntity get(@RequestParam(value = "accountId") String accountId,
+                              @RequestParam(value = "limitResultFromLatest", required = false) Integer limitResultFromLatest,
+                              @RequestParam(value = "description",required = false) String description,
+                              @RequestParam(value = "amount",required = false) Double amount,
+                              @RequestParam(value = "status",required = false) Integer status) {
         if (limitResultFromLatest != null){
             return new ResponseEntity(this.transactionsService.fetchLatestByAccount(accountId, limitResultFromLatest), HttpStatus.OK);
         }
+        if (status!=null){
+            return new ResponseEntity(this.transactionsService.fetchAllOrderByAmount(), HttpStatus.OK);
+        }
+        if (limitResultFromLatest==null && description!=null && amount==null){
+            return new ResponseEntity(this.transactionsService.fetchByDecsription(description), HttpStatus.OK);
+        }
+        if (limitResultFromLatest==null && description==null && amount!=null){
+            return new ResponseEntity(this.transactionsService.fetchByAmount(amount), HttpStatus.OK);
+        }
+        if (limitResultFromLatest==null && description!=null && amount!=null){
+            return new ResponseEntity(this.transactionsService.fetchByAmountAndDescription(description,amount), HttpStatus.OK);
+        }
+
         return new ResponseEntity(this.transactionsService.fetchAllByAccount(accountId), HttpStatus.OK);
     }
-
 
 }

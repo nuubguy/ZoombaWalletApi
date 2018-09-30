@@ -113,7 +113,7 @@ public class Transaction {
         this.description = description;
     }
 
-    public static Transaction createFromTransferObject(TransactionTransferObject aTransferObject){
+    public static Transaction createFromTransferObject(TransactionRepresentation aTransferObject){
 
         Account debit = aTransferObject.getDebit();
         Account credit = aTransferObject.getCredit();
