@@ -2,58 +2,40 @@ package com.zoombank.wallet_api.transactions;
 
 import com.zoombank.wallet_api.Money;
 import com.zoombank.wallet_api.accounts.Account;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Currency;
 
 /**
- * Represent record of exchange money
+ * Represent Rest object for Transcation
  */
-@Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "transactionId")
-public class Transaction {
+public class TransactionTransferObject {
 
-    @ManyToOne(targetEntity = Account.class)
-    @NotNull
     private Account debit;
 
-    @ManyToOne(targetEntity = Account.class)
-    @NotNull
     private Account credit;
 
-    @Column
     @NotNull
     private double amount;
 
-    @Column
     @NotNull
     private Currency currency;
 
-    @Id
     private String transactionId;
 
-    @Column
-    @NotNull
     private LocalDateTime dateTime;
 
-    @Column
-    @NotNull
     @Size(max = 15,message = "Description cannot be more than 15 character")
     private String description = "";
 
-    public Transaction(){
+    public TransactionTransferObject(){
 
     }
 
-    public Transaction(Account debit, Account credit, Money transactionAmount){
+    public TransactionTransferObject(Account debit, Account credit, Money transactionAmount){
 
         this.debit = debit;
         this.credit = credit;
@@ -113,15 +95,9 @@ public class Transaction {
         this.description = description;
     }
 
-    public static Transaction createFromTransferObject(TransactionTransferObject aTransferObject){
+    @AssertTrue(message = "Must specified Debit or Credit Account")
+    private boolean isDebitCreditValid(){
+        return (this.credit != null || this.debit != null);
 
-        Account debit = aTransferObject.getDebit();
-        Account credit = aTransferObject.getCredit();
-        Money transactionAmount = aTransferObject.getTransactionAmount();
-
-        Transaction aTransaction = new Transaction(debit, credit, transactionAmount);
-        aTransaction.setDescription(aTransferObject.getDescription());
-
-        return aTransaction;
     }
 }

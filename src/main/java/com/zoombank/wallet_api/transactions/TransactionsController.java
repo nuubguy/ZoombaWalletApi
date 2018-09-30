@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * Controller stereotype for Customers
  */
@@ -17,8 +19,8 @@ public class TransactionsController {
 
     @CrossOrigin
     @PostMapping
-    public ResponseEntity create(@RequestBody Transaction aTransaction){
-        Transaction createdTransaction = transactionsService.create(aTransaction);
+    public ResponseEntity create(@Valid @RequestBody TransactionTransferObject aTransaction){
+        Transaction createdTransaction = transactionsService.create(Transaction.createFromTransferObject(aTransaction));
         return new ResponseEntity(createdTransaction, HttpStatus.CREATED);
     }
 
