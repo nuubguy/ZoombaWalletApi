@@ -73,6 +73,50 @@ public class TransactionsControllerTest {
     }
 
     @Test
+    public void create_expectStatus201_WhenDebitIsNull() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        TransactionTransferObject transferMoney = new TransactionTransferObject(null,account1, Money.indonesianRupiah(1000000));
+
+        this.mockMvc.perform(post("/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(transferMoney)))
+                .andExpect(status().isCreated()).andDo(print());
+    }
+
+    @Test
+    public void create_expectStatus201_WhenCreditIsNull() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        TransactionTransferObject transferMoney = new TransactionTransferObject(account1,null, Money.indonesianRupiah(1000000));
+
+        this.mockMvc.perform(post("/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(transferMoney)))
+                .andExpect(status().isCreated()).andDo(print());
+    }
+
+    @Test
+    public void create_expectStatus400_WhenCreditAndDebitIsNull() throws Exception {
+        TransactionTransferObject transferMoney = new TransactionTransferObject(null,null, Money.indonesianRupiah(1000000));
+
+        this.mockMvc.perform(post("/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(transferMoney)))
+                .andExpect(status().isBadRequest()).andDo(print());
+    }
+
+    @Test
+    public void create_expectStatus400_WhenDescriptionIsMoreThan15Char() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        TransactionTransferObject transferMoney = new TransactionTransferObject(account1,null, Money.indonesianRupiah(1000000));
+        transferMoney.setDescription("12345678901234567");
+
+        this.mockMvc.perform(post("/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(transferMoney)))
+                .andExpect(status().isBadRequest()).andDo(print());
+    }
+
+    @Test
     public void create_expectStatus201_andHaveDescription() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
@@ -196,6 +240,36 @@ public class TransactionsControllerTest {
         assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
 
     }
+
+
+//    @Test
+//    public void get_expectTransactionContainADescription_WhenApplyFilterForADescription() throws Exception {
+//        Account account1 = createAccount1With5MilBalanceInRepository();
+//        Account account2 = createAccount2With5MilBalanceInRepository();
+//        List<Transaction> transactions = new ArrayList<>();
+//
+//        //create transactions
+//        Transaction trx1 = transfer(account1, account2, 500000);
+//        Transaction trx2 = transfer(account1, account2, 500000);
+//        Transaction trx3 = transfer(account1, account2, 500000);
+//        Transaction trx4 = transfer(account1, account2, 500000);
+//        Transaction trx5 = transfer(account1, account2, 500000);
+//        Transaction trx6 = transfer(account1, account2, 500000);
+//        Transaction trx7 = transfer(account1, account2, 500000);
+//
+//        trx6.setDescription("Beli mobil");
+//        trx6.setDescription("Beli mobil Baru");
+//
+//        transactions.add(trx6);
+//
+//
+//        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=5&description=Beli mobil")
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk()).andDo(print()).andReturn();
+//
+//        assertEquals(objectMapper.writeValueAsString(trx6), result.getResponse().getContentAsString());
+//
+//    }
 
 
     @Test
