@@ -106,27 +106,26 @@ public class TransactionsService extends BaseService<Transaction> {
         return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountId(accountId, accountId);
 
     }
-    public List<Transaction> fetchByDecsription(String description) {
-        return this.transactionsRepository.getAllByDescriptionContaining(description);
+    public List<Transaction> fetchByDecsription(String accountId,String description) {
+        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdAndDescriptionContaining(accountId,
+                accountId,description);
+    }
+
+    public List<Transaction> fetchByAmount(String accountId, double amount) {
+        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdAndAmountEquals(accountId,accountId,amount);
 
     }
 
-    public List<Transaction> fetchByAmount(double amount) {
-        return this.transactionsRepository.getAllByAmountEquals(amount);
-
+    public List<Transaction> fetchByAmountAndDescription(String accountId,String decription,double amount) {
+        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdAndDescriptionContainingAndAmountEquals
+                (accountId,accountId,decription,amount);
     }
 
-    public List<Transaction> fetchByAmountAndDescription(String decription,double amount) {
-        return this.transactionsRepository.getAllByDescriptionContainingAndAmountEquals(decription,amount);
+    public List<Transaction> fetchAllOrderByAmount(String accountId) {
+        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdOrderByAmountDesc(accountId,accountId);
     }
-
-    public List<Transaction> fetchAllOrderByAmount() {
-        return this.transactionsRepository.findAllByOrderByAmountDesc();
-    }
-
 
     public List<Transaction> fetchLatestByAccount(String accountId, Integer limitResultFromLatest){
         return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdOrderByDateTimeDesc(accountId, accountId, PageRequest.of(0,limitResultFromLatest)).getContent();
-
     }
 }

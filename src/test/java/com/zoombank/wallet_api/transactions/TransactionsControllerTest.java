@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -256,7 +257,7 @@ public class TransactionsControllerTest {
         transactions.add(trx6);
 
 
-        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=5&amount=500000")
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=&amount=500000")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andDo(print()).andReturn();
 
@@ -264,7 +265,7 @@ public class TransactionsControllerTest {
     }
 
     @Test
-    public void get_expectTransactionEqualDescriptionAmountAnd_WhenApplyFilterForAAmount() throws Exception {
+    public void get_expectTransactionEqualDescriptionAndAmountAnd_WhenApplyFilterForAAmount() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
         List<Transaction> transactions = new ArrayList<>();
@@ -277,11 +278,40 @@ public class TransactionsControllerTest {
 
         transactions.add(trx6);
 
-        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=5&amount=500000" +
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=&amount=500000" +
                 "&description=Beli mobil Baru")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andDo(print()).andReturn();
 
+        assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void get_expectTransactionSortedByAmount() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        Account account2 = createAccount2With5MilBalanceInRepository();
+        List<Transaction> transactions = new ArrayList<>();
+
+        //create transactions
+
+
+        Transaction trx6 = new Transaction(account1, account2, Money.indonesianRupiah(1500000));
+        trx6.setDescription("Beli mobil Baru");
+        trx6 = transactionsService.create(trx6);
+        transactions.add(trx6);
+
+        Transaction trx7 = new Transaction(account1, account2, Money.indonesianRupiah(500000));
+        trx7.setDescription("Beli mobil Baru");
+        trx7 = transactionsService.create(trx7);
+        transactions.add(trx7);
+
+        Collections.reverse(transactions);
+
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=&astatus=1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        System.out.println("check"+result.getResponse().getContentAsString());
         assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
     }
 
@@ -308,7 +338,27 @@ public class TransactionsControllerTest {
         System.out.println("check"+objectMapper.writeValueAsString(transactions));
 
         assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
+    }
 
+    @Test
+    public void get_expectTransactionEqualToDescriptionInput_WhenApplyFilterForADescriptionAndAccountId() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        Account account2 = createAccount2With5MilBalanceInRepository();
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction trx6 = new Transaction(account1, account2, Money.indonesianRupiah(500000));
+        trx6.setDescription("Beli saja");
+
+        trx6 = transactionsService.create(trx6);
+
+        transactions.add(trx6);
+
+
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=&description=Beli saja")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
     }
 
 
