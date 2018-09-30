@@ -18,22 +18,13 @@ public interface TransactionsRepository extends JpaRepository<Transaction, Strin
 
     Page<Transaction> getAllByCredit_AccountIdOrDebit_AccountIdOrderByDateTimeDesc(String creditAccountId, String debitAccountId, Pageable pageable);
 
-    List<Transaction>getAllByCredit_AccountIdOrDebit_AccountIdAndDescriptionContaining(String creditAccountId,
-                                                                                       String debitAccountId,
-                                                                                       String description);
+    List<Transaction>getAllByDescriptionContaining(String description);
 
-    List<Transaction>getAllByCredit_AccountIdOrDebit_AccountIdAndAmountEquals(String creditAccountId,
-                                                                              String debitAccountId,
-                                                                              double amount);
+    List<Transaction>getAllByAmountEquals(double amount);
 
-    List<Transaction>getAllByCredit_AccountIdOrDebit_AccountIdAndDescriptionContainingAndAmountEquals
-            (String creditAccountId,
-             String debitAccountId,
-             String description,
-             double amount);
+    List<Transaction>getAllByDescriptionContainingAndAmountEquals(String description,double amount);
 
-    List<Transaction>getAllByCredit_AccountIdOrDebit_AccountIdOrderByAmountDesc(String creditAccountId,
-                                                                                String debitAccountId);
+    List<Transaction>findAllByOrderByAmountDesc();
 
 
 }

@@ -37,13 +37,13 @@ public class TransactionsController {
         if (status!=null){
             return new ResponseEntity(this.transactionsService.fetchAllOrderByAmount(accountId), HttpStatus.OK);
         }
-        if (limitResultFromLatest==null && description!=null && amount==null){
+        if (limitResultFromLatest==null && !description.isEmpty() && amount==null){
             return new ResponseEntity(this.transactionsService.fetchByDecsription(accountId,description), HttpStatus.OK);
         }
-        if (limitResultFromLatest==null && description==null && amount!=null){
+        if (limitResultFromLatest==null && description.isEmpty() && amount!=null){
             return new ResponseEntity(this.transactionsService.fetchByAmount(accountId,amount), HttpStatus.OK);
         }
-        if (limitResultFromLatest==null && description!=null && amount!=null){
+        if (limitResultFromLatest==null && !description.isEmpty() && amount!=null){
             return new ResponseEntity(this.transactionsService.fetchByAmountAndDescription(accountId,description,amount), HttpStatus.OK);
         }
 

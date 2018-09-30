@@ -272,13 +272,16 @@ public class TransactionsControllerTest {
 
         //create transactions
         Transaction trx6 = new Transaction(account1, account2, Money.indonesianRupiah(500000));
+        Transaction trx1 = transfer(account1, account2, 1100000);
+        Transaction trx2 = transfer(account1, account2, 1400000);
         trx6.setDescription("Beli mobil Baru");
 
         trx6 = transactionsService.create(trx6);
 
         transactions.add(trx6);
 
-        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=&amount=500000" +
+
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=&amount=50000" +
                 "&description=Beli mobil Baru")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andDo(print()).andReturn();

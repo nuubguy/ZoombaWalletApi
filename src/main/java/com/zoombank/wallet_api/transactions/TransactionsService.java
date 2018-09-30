@@ -107,22 +107,21 @@ public class TransactionsService extends BaseService<Transaction> {
 
     }
     public List<Transaction> fetchByDecsription(String accountId,String description) {
-        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdAndDescriptionContaining(accountId,
-                accountId,description);
+        return this.transactionsRepository.getAllByDescriptionContaining(description);
     }
 
     public List<Transaction> fetchByAmount(String accountId, double amount) {
-        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdAndAmountEquals(accountId,accountId,amount);
+        return this.transactionsRepository.getAllByAmountEquals(amount);
 
     }
 
     public List<Transaction> fetchByAmountAndDescription(String accountId,String decription,double amount) {
-        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdAndDescriptionContainingAndAmountEquals
-                (accountId,accountId,decription,amount);
+        return this.transactionsRepository.getAllByDescriptionContainingAndAmountEquals
+                (decription,amount);
     }
 
     public List<Transaction> fetchAllOrderByAmount(String accountId) {
-        return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdOrderByAmountDesc(accountId,accountId);
+        return this.transactionsRepository.findAllByOrderByAmountDesc();
     }
 
     public List<Transaction> fetchLatestByAccount(String accountId, Integer limitResultFromLatest){
