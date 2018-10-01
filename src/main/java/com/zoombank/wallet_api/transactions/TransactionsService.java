@@ -107,7 +107,7 @@ public class TransactionsService extends BaseService<Transaction> {
 
     }
     public List<Transaction> fetchByDecsription(String accountId,String description) {
-        return this.transactionsRepository.getAllByDescriptionContaining(description);
+        return this.transactionsRepository.getAllByDescriptionContainingIgnoreCase(description);
     }
 
     public List<Transaction> fetchByAmount(String accountId, double amount) {
@@ -116,7 +116,7 @@ public class TransactionsService extends BaseService<Transaction> {
     }
 
     public List<Transaction> fetchByAmountAndDescription(String accountId,String decription,double amount) {
-        return this.transactionsRepository.getAllByDescriptionContainingAndAmountEquals
+        return this.transactionsRepository.getAllByDescriptionContainingIgnoreCaseAndAmountEquals
                 (decription,amount);
     }
 
