@@ -64,7 +64,7 @@ public class TransactionsControllerTest {
     public void create_expectStatus201() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
-        Transaction transferMoney = new Transaction(account1,account2, Money.indonesianRupiah(1000000));
+        TransactionTransferObject transferMoney = new TransactionTransferObject(account1,account2, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -120,7 +120,7 @@ public class TransactionsControllerTest {
     public void create_expectStatus201_andHaveDescription() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
-        Transaction transferMoney = new Transaction(account1,account2, Money.indonesianRupiah(1000000));
+        TransactionTransferObject transferMoney = new TransactionTransferObject(account1,account2, Money.indonesianRupiah(1000000));
         transferMoney.setDescription("Beli mobil");
 
         MvcResult result =  this.mockMvc.perform(post("/transactions")
@@ -137,7 +137,7 @@ public class TransactionsControllerTest {
     public void create_expectBalanceDebitedAndCredited_whenTransactionSuccess() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
-        Transaction transferMoney = new Transaction(account1, account2, Money.indonesianRupiah(1000000));
+        TransactionTransferObject transferMoney = new TransactionTransferObject(account1, account2, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -154,7 +154,7 @@ public class TransactionsControllerTest {
     public void create_expect403_whenBalanceForTransactionIsNotSufficient() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
-        Transaction transferMoney = new Transaction(account1, account2, Money.indonesianRupiah(6000000));
+        TransactionTransferObject transferMoney = new TransactionTransferObject(account1, account2, Money.indonesianRupiah(6000000));
 
         MvcResult result = this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -175,23 +175,6 @@ public class TransactionsControllerTest {
                 .andExpect(status().isNotFound()).andDo(print()).andReturn();
         assertEquals("Account not found", result.getResponse().getErrorMessage());
 
-    }
-
-    @Test
-    public void create_expect404_whenCustomerIsNotFound() throws Exception {
-        Account account1 = createAccount1With5MilBalanceInRepository();
-        Account account2 = createAccount2With5MilBalanceInRepository();
-
-        MvcResult result = this.mockMvc.perform(post("/transactions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(getInvalidCustomerTransactionJSON(account1, account2)))
-                .andExpect(status().isNotFound()).andDo(print()).andReturn();
-        assertEquals("Customer not found", result.getResponse().getErrorMessage());
-
-    }
-
-    private String getInvalidCustomerTransactionJSON(Account account1, Account account2) {
-        return "{\"debit\":{\"balance\":{\"amount\":5000000.0,\"currency\":\"IDR\"},\"customer\":{\"name\":\"customer 1\",\"info\":\"customer 1 info\",\"customerId\":\"C00000001\",\"disabled\":false},\"accountId\":\"" + account1.getAccountId() + "\"},\"credit\":{\"balance\":{\"amount\":5000000.0,\"currency\":\"IDR\"},\"customer\":{\"name\":\"customer 2\",\"info\":\"customer 2 info\",\"customerId\":\"C00000003\",\"disabled\":false},\"accountId\":\"" + account2.getAccountId() +"\"},\"transactionAmount\":{\"amount\":6000000.0,\"currency\":\"IDR\"},\"transactionId\":null}";
     }
 
     @Test
@@ -275,7 +258,7 @@ public class TransactionsControllerTest {
     @Test
     public void create_expectBalanceCredited_whenTransactionWithoutDebitAccount() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
-        Transaction transferMoney = new Transaction(null, account1, Money.indonesianRupiah(1000000));
+        TransactionTransferObject transferMoney = new TransactionTransferObject(null, account1, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -289,7 +272,7 @@ public class TransactionsControllerTest {
     @Test
     public void create_expectBalanceDebited_whenTransactionWithoutCreditAccount() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
-        Transaction transferMoney = new Transaction(account1, null, Money.indonesianRupiah(1000000));
+        TransactionTransferObject transferMoney = new TransactionTransferObject(account1, null, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -315,7 +298,7 @@ public class TransactionsControllerTest {
     }
 
     private String getInvalidAccountTransactionJSON(){
-        return "{\"debit\":{\"balance\":{\"amount\":5000000.0,\"currency\":\"IDR\"},\"customer\":{\"name\":\"customer 1\",\"info\":\"customer 1 info\",\"customerId\":\"C00000001\",\"disabled\":false},\"accountId\":\"A00000001\"},\"credit\":{\"balance\":{\"amount\":5000000.0,\"currency\":\"IDR\"},\"customer\":{\"name\":\"customer 2\",\"info\":\"customer 2 info\",\"customerId\":\"C00000002\",\"disabled\":false},\"accountId\":\"A00000003\"},\"transactionAmount\":{\"amount\":6000000.0,\"currency\":\"IDR\"},\"transactionId\":null}";
+        return "{\"debitAccountId\":\"A00000001\",\"creditAccountId\":\"A00000005\",\"transactionId\":null,\"dateTime\":null,\"description\":\"\",\"transactionAmount\":{\"amount\":1000000.0,\"currency\":\"IDR\"}}";
 
     }
 

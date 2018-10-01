@@ -53,6 +53,26 @@ public class TransactionsService extends BaseService<Transaction> {
         return transaction;
     }
 
+    public Transaction create(TransactionTransferObject target){
+        Account debit = null;
+        Account credit = null;
+
+        if(!target.getCreditAccountId().isEmpty()){
+            credit = accountsService.getById(target.getCreditAccountId());
+        }
+
+        if(!target.getDebitAccountId().isEmpty()){
+            debit = accountsService.getById(target.getDebitAccountId());
+        }
+
+        Money transactionAmount = target.getTransactionAmount();
+
+        Transaction aTransaction = new Transaction(debit, credit, transactionAmount);
+        aTransaction.setDescription(target.getDescription());
+
+        return create(aTransaction);
+    }
+
     @Override
     public Transaction create(Transaction target) {
         fillBankCashAccount(target);

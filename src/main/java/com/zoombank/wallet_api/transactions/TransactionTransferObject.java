@@ -14,9 +14,9 @@ import java.util.Currency;
  */
 public class TransactionTransferObject {
 
-    private Account debit;
+    private String debitAccountId;
 
-    private Account credit;
+    private String creditAccountId;
 
     @NotNull
     private double amount;
@@ -36,9 +36,19 @@ public class TransactionTransferObject {
     }
 
     public TransactionTransferObject(Account debit, Account credit, Money transactionAmount){
+        String debitAccountId = "";
+        String creditAccountId = "";
 
-        this.debit = debit;
-        this.credit = credit;
+        if(debit != null){
+            debitAccountId = debit.getAccountId();
+        }
+
+        if(credit != null){
+            creditAccountId = credit.getAccountId();
+        }
+
+        this.debitAccountId = debitAccountId;
+        this.creditAccountId = creditAccountId;
         setInternalAmount(transactionAmount);
     }
 
@@ -47,20 +57,20 @@ public class TransactionTransferObject {
         this.currency = transactionAmount.getCurrency();
     }
 
-    public Account getDebit() {
-        return debit;
+    public String getDebitAccountId() {
+        return debitAccountId;
     }
 
-    public void setDebit(Account debit) {
-        this.debit = debit;
+    public void setDebitAccountId(String debitAccountId) {
+        this.debitAccountId = debitAccountId;
     }
 
-    public Account getCredit() {
-        return credit;
+    public String getCreditAccountId() {
+        return creditAccountId;
     }
 
-    public void setCredit(Account credit) {
-        this.credit = credit;
+    public void setCreditAccountId(String creditAccountId) {
+        this.creditAccountId = creditAccountId;
     }
 
     public Money getTransactionAmount() {
@@ -97,7 +107,7 @@ public class TransactionTransferObject {
 
     @AssertTrue(message = "Must specified Debit or Credit Account")
     private boolean isDebitCreditValid(){
-        return (this.credit != null || this.debit != null);
+        return ((this.creditAccountId != null && !this.creditAccountId.isEmpty()) || (this.debitAccountId != null && !this.debitAccountId.isEmpty()));
 
     }
 }
