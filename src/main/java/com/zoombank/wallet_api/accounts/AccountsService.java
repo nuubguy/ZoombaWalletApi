@@ -17,7 +17,7 @@ import java.util.Optional;
 public class AccountsService extends BaseService<Account> {
 
     private static final String idPrefix = "A";
-    private final String cashAccountId = "CASH ACCOUNT";
+    public final String cashAccountId = "CASH ACCOUNT";
 
     @Autowired
     CustomersService customersService;
