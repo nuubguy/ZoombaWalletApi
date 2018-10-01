@@ -20,7 +20,7 @@ public class TransactionsController {
     @CrossOrigin
     @PostMapping
     public ResponseEntity create(@Valid @RequestBody TransactionTransferObject aTransaction){
-        Transaction createdTransaction = transactionsService.create(Transaction.createFromTransferObject(aTransaction));
+        Transaction createdTransaction = transactionsService.create(aTransaction);
         return new ResponseEntity(createdTransaction, HttpStatus.CREATED);
     }
 
