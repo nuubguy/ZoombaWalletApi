@@ -8,7 +8,6 @@ import com.zoombank.wallet_api.customers.Customer;
 import com.zoombank.wallet_api.customers.CustomersRepository;
 import com.zoombank.wallet_api.customers.CustomersService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.coyote.Response;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -64,7 +64,7 @@ public class TransactionsControllerTest {
     public void create_expectStatus201() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
-        TransactionTransferObject transferMoney = new TransactionTransferObject(account1,account2, Money.indonesianRupiah(1000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(account1,account2, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -75,7 +75,7 @@ public class TransactionsControllerTest {
     @Test
     public void create_expectStatus201_WhenDebitIsNull() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
-        TransactionTransferObject transferMoney = new TransactionTransferObject(null,account1, Money.indonesianRupiah(1000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(null,account1, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ public class TransactionsControllerTest {
     @Test
     public void create_expectStatus201_WhenCreditIsNull() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
-        TransactionTransferObject transferMoney = new TransactionTransferObject(account1,null, Money.indonesianRupiah(1000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(account1,null, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -96,7 +96,7 @@ public class TransactionsControllerTest {
 
     @Test
     public void create_expectStatus400_WhenCreditAndDebitIsNull() throws Exception {
-        TransactionTransferObject transferMoney = new TransactionTransferObject(null,null, Money.indonesianRupiah(1000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(null,null, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,7 +107,7 @@ public class TransactionsControllerTest {
     @Test
     public void create_expectStatus400_WhenDescriptionIsMoreThan15Char() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
-        TransactionTransferObject transferMoney = new TransactionTransferObject(account1,null, Money.indonesianRupiah(1000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(account1,null, Money.indonesianRupiah(1000000));
         transferMoney.setDescription("12345678901234567");
 
         this.mockMvc.perform(post("/transactions")
@@ -120,7 +120,7 @@ public class TransactionsControllerTest {
     public void create_expectStatus201_andHaveDescription() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
-        TransactionTransferObject transferMoney = new TransactionTransferObject(account1,account2, Money.indonesianRupiah(1000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(account1,account2, Money.indonesianRupiah(1000000));
         transferMoney.setDescription("Beli mobil");
 
         MvcResult result =  this.mockMvc.perform(post("/transactions")
@@ -137,7 +137,7 @@ public class TransactionsControllerTest {
     public void create_expectBalanceDebitedAndCredited_whenTransactionSuccess() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
-        TransactionTransferObject transferMoney = new TransactionTransferObject(account1, account2, Money.indonesianRupiah(1000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(account1, account2, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -154,7 +154,7 @@ public class TransactionsControllerTest {
     public void create_expect403_whenBalanceForTransactionIsNotSufficient() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
         Account account2 = createAccount2With5MilBalanceInRepository();
-        TransactionTransferObject transferMoney = new TransactionTransferObject(account1, account2, Money.indonesianRupiah(6000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(account1, account2, Money.indonesianRupiah(6000000));
 
         MvcResult result = this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -225,40 +225,105 @@ public class TransactionsControllerTest {
     }
 
 
-//    @Test
-//    public void get_expectTransactionContainADescription_WhenApplyFilterForADescription() throws Exception {
-//        Account account1 = createAccount1With5MilBalanceInRepository();
-//        Account account2 = createAccount2With5MilBalanceInRepository();
-//        List<Transaction> transactions = new ArrayList<>();
-//
-//        //create transactions
-//        Transaction trx1 = transfer(account1, account2, 500000);
-//        Transaction trx2 = transfer(account1, account2, 500000);
-//        Transaction trx3 = transfer(account1, account2, 500000);
-//        Transaction trx4 = transfer(account1, account2, 500000);
-//        Transaction trx5 = transfer(account1, account2, 500000);
-//        Transaction trx6 = transfer(account1, account2, 500000);
-//        Transaction trx7 = transfer(account1, account2, 500000);
-//
-//        trx6.setDescription("Beli mobil");
-//        trx6.setDescription("Beli mobil Baru");
-//
-//        transactions.add(trx6);
-//
-//
-//        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=5&description=Beli mobil")
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk()).andDo(print()).andReturn();
-//
-//        assertEquals(objectMapper.writeValueAsString(trx6), result.getResponse().getContentAsString());
-//
-//    }
+    @Test
+    public void get_expectTransactionEqualAmount_WhenApplyFilterForAAmount() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        Account account2 = createAccount2With5MilBalanceInRepository();
+        List<Transaction> transactions = new ArrayList<>();
+
+        //create transactions
+        Transaction trx6 = new Transaction(account1, account2, Money.indonesianRupiah(500000));
+        trx6.setDescription("Beli mobil Baru");
+
+        trx6 = transactionsService.create(trx6);
+
+        transactions.add(trx6);
+
+
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=&amount=500000")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void get_expectTransactionEqualDescriptionAndAmountAnd_WhenApplyFilterForAAmount() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        Account account2 = createAccount2With5MilBalanceInRepository();
+        List<Transaction> transactions = new ArrayList<>();
+
+        //create transactions
+        Transaction trx6 = new Transaction(account1, account2, Money.indonesianRupiah(500000));
+        Transaction trx1 = transfer(account1, account2, 1100000);
+        Transaction trx2 = transfer(account1, account2, 1400000);
+        trx6.setDescription("Beli mobil Baru");
+
+        trx6 = transactionsService.create(trx6);
+
+        transactions.add(trx6);
+
+
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=&amount=500000" +
+                "&description=Beli mobil Baru")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
+    }
+
+
+    @Test
+    public void get_expectTransactionEqualToDescriptionInput_WhenApplyFilterForADescription() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        Account account2 = createAccount2With5MilBalanceInRepository();
+        List<Transaction> transactions = new ArrayList<>();
+
+        //create transactions
+        Transaction trx6 = new Transaction(account1, account2, Money.indonesianRupiah(500000));
+        trx6.setDescription("Beli mobil Baru");
+
+        trx6 = transactionsService.create(trx6);
+
+        transactions.add(trx6);
+
+
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=5&description=Beli mobil Baru")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        System.out.println("check"+result.getResponse().getContentAsString());
+        System.out.println("check"+objectMapper.writeValueAsString(transactions));
+
+        assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void get_expectTransactionEqualToDescriptionInput_WhenApplyFilterForADescriptionAndAccountId() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        Account account2 = createAccount2With5MilBalanceInRepository();
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction trx6 = new Transaction(account1, account2, Money.indonesianRupiah(500000));
+        trx6.setDescription("Beli saja");
+
+        trx6 = transactionsService.create(trx6);
+
+        transactions.add(trx6);
+
+
+        MvcResult result = this.mockMvc.perform(get("/transactions?accountId=" + account1.getAccountId() + "&limitResultFromLatest=&description=Beli saja")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        assertEquals(objectMapper.writeValueAsString(transactions), result.getResponse().getContentAsString());
+    }
 
 
     @Test
     public void create_expectBalanceCredited_whenTransactionWithoutDebitAccount() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
-        TransactionTransferObject transferMoney = new TransactionTransferObject(null, account1, Money.indonesianRupiah(1000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(null, account1, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -272,7 +337,7 @@ public class TransactionsControllerTest {
     @Test
     public void create_expectBalanceDebited_whenTransactionWithoutCreditAccount() throws Exception {
         Account account1 = createAccount1With5MilBalanceInRepository();
-        TransactionTransferObject transferMoney = new TransactionTransferObject(account1, null, Money.indonesianRupiah(1000000));
+        TransactionRepresentation transferMoney = new TransactionRepresentation(account1, null, Money.indonesianRupiah(1000000));
 
         this.mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)

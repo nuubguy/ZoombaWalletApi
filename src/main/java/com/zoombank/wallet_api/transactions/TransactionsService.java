@@ -53,7 +53,7 @@ public class TransactionsService extends BaseService<Transaction> {
         return transaction;
     }
 
-    public Transaction create(TransactionTransferObject target){
+    public Transaction create(TransactionRepresentation target){
         Account debit = null;
         Account credit = null;
 
@@ -126,9 +126,21 @@ public class TransactionsService extends BaseService<Transaction> {
         return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountId(accountId, accountId);
 
     }
+    public List<Transaction> fetchByDecsription(String accountId,String description) {
+        return this.transactionsRepository.getAllByDescriptionContainingIgnoreCase(description);
+    }
+
+    public List<Transaction> fetchByAmount(String accountId, double amount) {
+        return this.transactionsRepository.getAllByAmountEquals(amount);
+
+    }
+
+    public List<Transaction> fetchByAmountAndDescription(String accountId,String decription,double amount) {
+        return this.transactionsRepository.getAllByDescriptionContainingIgnoreCaseAndAmountEquals
+                (decription,amount);
+    }
 
     public List<Transaction> fetchLatestByAccount(String accountId, Integer limitResultFromLatest){
         return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdOrderByDateTimeDesc(accountId, accountId, PageRequest.of(0,limitResultFromLatest)).getContent();
-
     }
 }

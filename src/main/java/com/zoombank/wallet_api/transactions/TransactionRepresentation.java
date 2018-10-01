@@ -12,7 +12,7 @@ import java.util.Currency;
 /**
  * Represent Rest object for Transcation
  */
-public class TransactionTransferObject {
+public class TransactionRepresentation {
 
     private String debitAccountId;
 
@@ -31,11 +31,11 @@ public class TransactionTransferObject {
     @Size(max = 15,message = "Description cannot be more than 15 character")
     private String description = "";
 
-    public TransactionTransferObject(){
+    public TransactionRepresentation(){
 
     }
 
-    public TransactionTransferObject(Account debit, Account credit, Money transactionAmount){
+    public TransactionRepresentation(Account debit, Account credit, Money transactionAmount){
         String debitAccountId = "";
         String creditAccountId = "";
 
