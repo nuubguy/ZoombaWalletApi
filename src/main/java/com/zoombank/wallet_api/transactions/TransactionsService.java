@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -89,6 +92,9 @@ public class TransactionsService extends BaseService<Transaction> {
 
             target.setDateTime(LocalDateTime.now());
             target.setTransactionId(this.createID());
+            if (target.getCredit().getAccountId().equals(this.accountsService.cashAccountId)){
+                target.setWithdrawalCode(getWithdrawalCode(target.getTransactionId()).toString());
+            }
             transactionsRepository.save(target);
 
             removeBankCashAccount(target);
@@ -142,5 +148,32 @@ public class TransactionsService extends BaseService<Transaction> {
 
     public List<Transaction> fetchLatestByAccount(String accountId, Integer limitResultFromLatest){
         return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdOrderByDateTimeDesc(accountId, accountId, PageRequest.of(0,limitResultFromLatest)).getContent();
+    }
+
+    public Integer getWithdrawalCode(String transactionId) {
+        String plaintext = transactionId;
+        int hash = transactionId.hashCode();
+        MessageDigest m;
+        try {
+            m = MessageDigest.getInstance("MD5");
+            m.reset();
+            m.update(plaintext.getBytes());
+            byte[] digest = m.digest();
+            BigInteger bigInt = new BigInteger(1,digest);
+            String hashtext = bigInt.toString(10);
+            while(hashtext.length() < 32 ){
+                hashtext = "0"+hashtext;
+            }
+            int temp = 0;
+            for(int i =0; i<hashtext.length();i++){
+                char c = hashtext.charAt(i);
+                temp+=(int)c;
+            }
+            return hash+temp;
+        } catch (NoSuchAlgorithmException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return hash;
     }
 }

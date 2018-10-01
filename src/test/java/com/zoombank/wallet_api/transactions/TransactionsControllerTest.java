@@ -1,5 +1,6 @@
 package com.zoombank.wallet_api.transactions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zoombank.wallet_api.Money;
 import com.zoombank.wallet_api.accounts.Account;
 import com.zoombank.wallet_api.accounts.AccountsRepository;
@@ -7,7 +8,6 @@ import com.zoombank.wallet_api.accounts.AccountsService;
 import com.zoombank.wallet_api.customers.Customer;
 import com.zoombank.wallet_api.customers.CustomersRepository;
 import com.zoombank.wallet_api.customers.CustomersService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -95,6 +94,23 @@ public class TransactionsControllerTest {
     }
 
     @Test
+    public void create_expectStatus201AndHaveWithdrawalCode_WhenCreditIsNull() throws Exception {
+        Account account1 = createAccount1With5MilBalanceInRepository();
+        TransactionRepresentation transferMoney = new TransactionRepresentation(account1,null, Money.indonesianRupiah(1000000));
+
+        MvcResult result=this.mockMvc.perform(post("/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(transferMoney)))
+                .andExpect(status().isCreated()).andDo(print()).andReturn();
+
+        Transaction currentTransaction = objectMapper.readValue(result.getResponse().getContentAsString(), Transaction.class);
+        String code =transactionsService.getWithdrawalCode(currentTransaction.getTransactionId()).toString();
+
+        assertTrue(result.getResponse().getContentAsString().contains(code));
+
+    }
+
+    @Test
     public void create_expectStatus400_WhenCreditAndDebitIsNull() throws Exception {
         TransactionRepresentation transferMoney = new TransactionRepresentation(null,null, Money.indonesianRupiah(1000000));
 
@@ -102,6 +118,7 @@ public class TransactionsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(transferMoney)))
                 .andExpect(status().isBadRequest()).andDo(print());
+
     }
 
     @Test

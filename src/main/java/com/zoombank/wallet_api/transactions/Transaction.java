@@ -1,9 +1,9 @@
 package com.zoombank.wallet_api.transactions;
 
-import com.zoombank.wallet_api.Money;
-import com.zoombank.wallet_api.accounts.Account;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.zoombank.wallet_api.Money;
+import com.zoombank.wallet_api.accounts.Account;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,8 +49,20 @@ public class Transaction {
     @Size(max = 15,message = "Description cannot be more than 15 character")
     private String description = "";
 
+    @Column
+    private String withdrawalCode;
+
+
     public Transaction(){
 
+    }
+
+    public String getWithdrawalCode() {
+        return withdrawalCode;
+    }
+
+    public void setWithdrawalCode(String withdrawalCode) {
+        this.withdrawalCode = withdrawalCode;
     }
 
     public Transaction(Account debit, Account credit, Money transactionAmount){
