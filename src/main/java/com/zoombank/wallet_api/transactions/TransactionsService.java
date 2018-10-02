@@ -197,7 +197,7 @@ public class TransactionsService extends BaseService<Transaction> {
         return new Specification<Transaction>() {
             @Override
             public Predicate toPredicate(Root<Transaction> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
-                return cb.like(cb.lower(root.get(Transaction_.description)), keyword.toLowerCase());
+                return cb.like(cb.lower(root.get(Transaction_.description)),"%"+ keyword.toLowerCase()+"%");
             }
         };
     }
