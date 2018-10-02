@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Controller stereotype for Customers
@@ -34,17 +35,10 @@ public class TransactionsController {
         if (limitResultFromLatest != null){
             return new ResponseEntity(this.transactionsService.fetchLatestByAccount(accountId, limitResultFromLatest), HttpStatus.OK);
         }
-        if (limitResultFromLatest==null && description != null && amount==null){
-            return new ResponseEntity(this.transactionsService.fetchByDecsription(accountId,description), HttpStatus.OK);
-        }
-        if (limitResultFromLatest==null && description == null && amount!=null){
-            return new ResponseEntity(this.transactionsService.fetchByAmount(accountId,amount), HttpStatus.OK);
-        }
-        if (limitResultFromLatest==null && description != null && amount!=null){
-            return new ResponseEntity(this.transactionsService.fetchByAmountAndDescription(accountId,description,amount), HttpStatus.OK);
-        }
 
-        return new ResponseEntity(this.transactionsService.fetchAllByAccount(accountId), HttpStatus.OK);
+        List<Transaction> result = this.transactionsService.fetchAll(accountId, description,amount ,status);
+
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
 }

@@ -9,8 +9,14 @@ import com.zoombank.wallet_api.accounts.InvalidAccountException;
 import com.zoombank.wallet_api.customers.CustomerNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -148,6 +154,60 @@ public class TransactionsService extends BaseService<Transaction> {
 
     public List<Transaction> fetchLatestByAccount(String accountId, Integer limitResultFromLatest){
         return this.transactionsRepository.getAllByCredit_AccountIdOrDebit_AccountIdOrderByDateTimeDesc(accountId, accountId, PageRequest.of(0,limitResultFromLatest)).getContent();
+    }
+
+    public List<Transaction> fetchAll(String accountId, String description, Double amount, Integer status) {
+        Specification<Transaction> accountSpec = isDebitOrCreditEqualWithAccountId(this.accountsService.getById(accountId));
+        Specification<Transaction> spec = Specification.where(accountSpec);
+        Sort sorting = new Sort(Sort.Direction.DESC, "dateTime");
+        if(description !=null && !description.isEmpty()){
+            Specification<Transaction> descriptionSpec = isDescriptionLikeAKeyword(description);
+            spec = spec.and(descriptionSpec);
+        }
+        if(amount!=null){
+            Specification<Transaction> amountSpec= isAmountWithinRange(amount,amount);
+            spec = spec.and(amountSpec);
+        }
+
+        if(status != null){
+            if(status == 1){
+                sorting = new Sort(Sort.Direction.ASC,"amount");
+
+            }else if (status==2){
+                sorting = new Sort(Sort.Direction.DESC,"amount");
+            }
+
+        }
+
+        return this.transactionsRepository.findAll(spec, sorting);
+
+    }
+
+
+
+    private Specification<Transaction> isDebitOrCreditEqualWithAccountId(Account account) {
+        return new Specification<Transaction>() {
+            @Override
+            public Predicate toPredicate(Root<Transaction> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                return cb.or(cb.equal(root.get(Transaction_.credit), account), cb.equal(root.get(Transaction_.debit), account));
+            }
+        };
+    }
+    private Specification<Transaction> isDescriptionLikeAKeyword(String keyword) {
+        return new Specification<Transaction>() {
+            @Override
+            public Predicate toPredicate(Root<Transaction> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                return cb.like(cb.lower(root.get(Transaction_.description)), keyword.toLowerCase());
+            }
+        };
+    }
+    private Specification<Transaction> isAmountWithinRange(double min, double max) {
+        return new Specification<Transaction>() {
+            @Override
+            public Predicate toPredicate(Root<Transaction> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                return cb.and(cb.greaterThanOrEqualTo(root.get(Transaction_.amount), min), cb.lessThanOrEqualTo(root.get(Transaction_.amount), max));
+            }
+        };
     }
 
     public Integer getWithdrawalCode(String transactionId) {
