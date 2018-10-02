@@ -8,6 +8,8 @@ import com.zoombank.wallet_api.customers.CustomersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -61,6 +63,23 @@ public class AccountsService extends BaseService<Account> {
         account.setCustomer(customer);
         return this.create(account);
 
+    }
+
+    public Account updatePayee(String customerId, AccountPayeeRepresentation accountPayee){
+        Account account = this.getById(accountPayee.getAccountId());
+
+        if(!account.getCustomer().getCustomerId().equals(customerId)){
+            throw new InvalidAccountException();
+        }
+
+        List<Account> accounts = new ArrayList<>();
+        for (int i = 0; i < accountPayee.getPayees().size(); i++) {
+            accounts.add(this.getById(accountPayee.getPayees().get(0).getAccountId()));
+        }
+
+        account.setPayees(accounts);
+
+        return this.accountsRepository.save(account);
     }
 
     public Money getBalance(String customerId, String accountId) {
