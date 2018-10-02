@@ -173,7 +173,7 @@ public class TransactionsService extends BaseService<Transaction> {
             if(status == 1){
                 sorting = new Sort(Sort.Direction.ASC,"amount");
 
-            }else{
+            }else if (status==2){
                 sorting = new Sort(Sort.Direction.DESC,"amount");
             }
 
