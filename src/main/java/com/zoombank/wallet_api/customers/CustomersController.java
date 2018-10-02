@@ -42,4 +42,5 @@ public class CustomersController {
     public ResponseEntity fetch(@PathVariable String id) {
         return new ResponseEntity(customersService.getById(id), HttpStatus.OK);
     }
+
 }
