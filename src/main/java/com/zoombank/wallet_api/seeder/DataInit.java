@@ -25,19 +25,28 @@ public class DataInit {
     }
 
     private void initAccount() {
+        String defaultPassword = "P@ssw0rd";
+
         Customer aCustomer = new Customer("Chip", "Someone at BTPN");
-        aCustomer.setPassword("P@ssw0rd");
+        aCustomer.setPassword(defaultPassword);
         customersService.create(aCustomer);
 
         Account newAccount = new Account(Money.indonesianRupiah(0),aCustomer);
         accountsService.create(newAccount);
 
         Customer andries = new Customer("Andries", "CHIP member");
-        aCustomer.setPassword("P@ssw0rd");
+        aCustomer.setPassword(defaultPassword);
         customersService.create(andries);
 
         Account andriesAccount = new Account(Money.indonesianRupiah(0),andries);
         accountsService.create(andriesAccount);
+
+        Customer rifki = new Customer("Rifki", "CHIP member");
+        aCustomer.setPassword(defaultPassword);
+        customersService.create(rifki);
+
+        Account rifkiAccount = new Account(Money.indonesianRupiah(0),rifki);
+        accountsService.create(rifkiAccount);
 
     }
 }
