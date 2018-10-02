@@ -59,6 +59,60 @@ public class AccountsControllerTest {
         Assert.assertEquals(Double.valueOf("5000000"), createdAccount.getBalance().getAmount(),0);
     }
 
+    @Test
+    public void put_updateListOfPayee() throws Exception {
+        Customer createdCustomer = createCustomer1InTheRepository();
+        Account anAccount = createAccountWith5MilBalanceInRepository(createdCustomer);
+        Account account2 = createAccountWith5MilBalanceInRepository(createdCustomer);
+
+        AccountPayeeRepresentation payLoad = new AccountPayeeRepresentation(anAccount);
+        AccountSummaryRepresentation payee = new AccountSummaryRepresentation(account2);
+
+        payLoad.getPayees().add(payee);
+
+        String urlTemplate = "/customers/" + createdCustomer.getCustomerId() + "/accounts";
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(payLoad)))
+                .andExpect(status().isAccepted()).andDo(print()).andReturn();
+
+        Account account = objectMapper.readValue(result.getResponse().getContentAsString(), Account.class);
+        Assert.assertEquals(account.getPayees().size(), 1);
+        assertEquals(account.getPayees().get(0).getAccountId(), account2.getAccountId());
+    }
+
+    @Test
+    public void get_expectListOfPayee() throws Exception {
+        Customer createdCustomer = createCustomer1InTheRepository();
+        Account anAccount = createAccountWith5MilBalanceInRepository(createdCustomer);
+        Account account2 = createAccountWith5MilBalanceInRepository(createdCustomer);
+
+        anAccount.getPayees().add(account2);
+        accountsRepository.save(anAccount);
+
+        String urlTemplate = "/customers/" + createdCustomer.getCustomerId() + "/accounts/" + anAccount.getAccountId();
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        Account account = objectMapper.readValue(result.getResponse().getContentAsString(), Account.class);
+        Assert.assertEquals(account.getPayees().size(), 1);
+        assertEquals(account.getPayees().get(0).getAccountId(), account2.getAccountId());
+    }
+
+
+    @Test
+    public void get_expectAccountIdAndCustomerName_WhenSearchByAccountId() throws Exception {
+        Customer createdCustomer = createCustomer1InTheRepository();
+        Account anAccount = createAccountWith5MilBalanceInRepository(createdCustomer);
+        String urlTemplate = "/accounts?accountId=" + anAccount.getAccountId();
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate))
+                .andExpect(status().isOk()).andDo(print()).andReturn();
+
+        AccountSummaryRepresentation account = objectMapper.readValue(result.getResponse().getContentAsString(), AccountSummaryRepresentation.class);
+        Assert.assertEquals(anAccount.getAccountId(), account.getAccountId());
+        assertEquals(anAccount.getCustomer().getName(), account.getCustomerName());
+    }
+
 
     @Test
     public void get_expectAccountWithBalance5Mil() throws Exception {
