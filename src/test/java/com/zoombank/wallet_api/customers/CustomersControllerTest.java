@@ -114,8 +114,8 @@ public class CustomersControllerTest {
         MvcResult result = this.mockMvc.perform(get("/customers/"+ createdCustomer.getCustomerId()))
                 .andExpect(status().isOk()).andReturn();
 
-        Customer targetCustomer = objectMapper.readValue(result.getResponse().getContentAsString(), Customer.class);
-        assertEquals("customer 1", targetCustomer.getName());
+        CustomerRepresentation targetCustomer = objectMapper.readValue(result.getResponse().getContentAsString(), CustomerRepresentation.class);
+        assertEquals("customer 1", targetCustomer.getCustomerName());
 
     }
 
