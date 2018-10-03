@@ -29,7 +29,7 @@ public class Account {
     @Id
     private String accountId;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Account> payees;
 
     public Account(){
