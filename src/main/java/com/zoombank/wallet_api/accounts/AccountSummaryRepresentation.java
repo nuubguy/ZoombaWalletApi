@@ -7,6 +7,7 @@ public class AccountSummaryRepresentation {
 
     private String accountId;
     private String customerName;
+    private String customerId;
 
     public AccountSummaryRepresentation(){
 
@@ -15,6 +16,15 @@ public class AccountSummaryRepresentation {
     public AccountSummaryRepresentation(Account account){
         this.accountId = account.getAccountId();
         this.customerName = account.getCustomer().getName();
+        this.customerId = account.getCustomer().getCustomerId();
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     public String getAccountId() {

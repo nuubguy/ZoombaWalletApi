@@ -35,14 +35,14 @@ public class DataInit {
         accountsService.create(newAccount);
 
         Customer andries = new Customer("Andries", "CHIP member");
-        aCustomer.setPassword(defaultPassword);
+        andries.setPassword(defaultPassword);
         customersService.create(andries);
 
         Account andriesAccount = new Account(Money.indonesianRupiah(0),andries);
         accountsService.create(andriesAccount);
 
         Customer rifki = new Customer("Rifki", "CHIP member");
-        aCustomer.setPassword(defaultPassword);
+        rifki.setPassword(defaultPassword);
         customersService.create(rifki);
 
         Account rifkiAccount = new Account(Money.indonesianRupiah(0),rifki);

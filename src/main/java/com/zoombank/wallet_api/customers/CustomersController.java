@@ -1,10 +1,14 @@
 package com.zoombank.wallet_api.customers;
 
 import com.zoombank.wallet_api.BaseController;
+import com.zoombank.wallet_api.accounts.Account;
+import com.zoombank.wallet_api.accounts.AccountsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller stereotype for Customers
@@ -15,6 +19,9 @@ public class CustomersController extends BaseController {
 
     @Autowired
     private CustomersService customersService;
+
+    @Autowired
+    private AccountsRepository accountsRepository;
 
     @CrossOrigin
     @PostMapping
@@ -44,6 +51,10 @@ public class CustomersController extends BaseController {
     @GetMapping("/{id}")
     public ResponseEntity fetch(@PathVariable String id) {
         if (checkAuthentication(id)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
-        return new ResponseEntity(customersService.getById(id), HttpStatus.OK);
+        Customer customer = customersService.getById(id);
+        CustomerRepresentation result = new CustomerRepresentation(customer.getCustomerId(), customer.getName());
+        List<Account> accountList = accountsRepository.getAllByCustomer_CustomerId(id);
+        result.setAccountList(accountList);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

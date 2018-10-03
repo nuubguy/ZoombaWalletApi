@@ -1,13 +1,13 @@
 package com.zoombank.wallet_api.customers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zoombank.wallet_api.accounts.Account;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Represent that use the banking service
