@@ -1,5 +1,6 @@
 package com.zoombank.wallet_api.customers;
 
+import com.zoombank.wallet_api.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/customers")
-public class CustomersController {
+public class CustomersController extends BaseController {
 
     @Autowired
     private CustomersService customersService;
@@ -25,6 +26,7 @@ public class CustomersController {
     @CrossOrigin
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable String id, @RequestBody Customer aCustomer) {
+        if (checkAuthentication(id)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         aCustomer.setCustomerId(id);
         Customer updatedCustomer = this.customersService.update(aCustomer);
         return new ResponseEntity(updatedCustomer, HttpStatus.ACCEPTED);
@@ -33,6 +35,7 @@ public class CustomersController {
     @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable String id) {
+        if (checkAuthentication(id)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         this.customersService.delete(id);
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }
@@ -40,7 +43,7 @@ public class CustomersController {
     @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity fetch(@PathVariable String id) {
+        if (checkAuthentication(id)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         return new ResponseEntity(customersService.getById(id), HttpStatus.OK);
     }
-
 }
