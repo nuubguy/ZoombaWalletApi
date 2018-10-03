@@ -1,8 +1,6 @@
 package com.zoombank.wallet_api.customers;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -15,7 +13,6 @@ import javax.validation.constraints.NotNull;
  * Represent that use the banking service
  */
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "customerId")
 public class Customer {
 
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();

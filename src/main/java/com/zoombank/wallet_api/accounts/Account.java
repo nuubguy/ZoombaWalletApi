@@ -2,8 +2,6 @@ package com.zoombank.wallet_api.accounts;
 
 import com.zoombank.wallet_api.Money;
 import com.zoombank.wallet_api.customers.Customer;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,7 +13,6 @@ import java.util.List;
  * Represent financial record of customer
  */
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "accountId")
 public class Account {
 
     @Column
