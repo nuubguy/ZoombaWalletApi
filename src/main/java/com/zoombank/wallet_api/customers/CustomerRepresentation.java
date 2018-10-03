@@ -17,6 +17,9 @@ public class CustomerRepresentation {
         this.accountList = new ArrayList<>();
     }
 
+    public CustomerRepresentation(){
+
+    }
     public String getCustomerId() {
         return customerId;
     }
