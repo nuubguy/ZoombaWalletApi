@@ -1,6 +1,5 @@
 package com.zoombank.wallet_api.customers;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,10 +31,6 @@ public class Customer {
     @NotNull
     private boolean disabled = false;
 
-    @JsonIgnore
-    @Column
-    private String password;
-
     public Customer(){
 
     }
@@ -44,15 +39,6 @@ public class Customer {
 
         this.name = name;
         this.info = info;
-        this.setPassword("P@ssw0rd");
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = PASSWORD_ENCODER.encode(password);
     }
 
     public String getName() {

@@ -1,5 +1,6 @@
 package com.zoombank.wallet_api.accounts;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zoombank.wallet_api.Money;
 import com.zoombank.wallet_api.customers.Customer;
 
@@ -8,6 +9,8 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
+
+import static com.zoombank.wallet_api.customers.Customer.PASSWORD_ENCODER;
 
 /**
  * Represent financial record of customer
@@ -32,6 +35,10 @@ public class Account {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Account> payees;
 
+    @JsonIgnore
+    @Column
+    private String password;
+
     public Account(){
 
     }
@@ -49,11 +56,20 @@ public class Account {
         setInternalBalance(balance);
         this.customer = customer;
         this.payees = new ArrayList<>();
+        this.setPassword("P@ssw0rd");
     }
 
     private void setInternalBalance(Money balance) {
         this.amount = balance.getAmount();
         this.currency = balance.getCurrency();
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = PASSWORD_ENCODER.encode(password);
     }
 
     public Money getBalance() {

@@ -28,24 +28,24 @@ public class DataInit {
         String defaultPassword = "P@ssw0rd";
 
         Customer aCustomer = new Customer("Chip", "Someone at BTPN");
-        aCustomer.setPassword(defaultPassword);
         customersService.create(aCustomer);
 
         Account newAccount = new Account(Money.indonesianRupiah(0),aCustomer);
+        newAccount.setPassword(defaultPassword);
         accountsService.create(newAccount);
 
         Customer andries = new Customer("Andries", "CHIP member");
-        aCustomer.setPassword(defaultPassword);
         customersService.create(andries);
 
         Account andriesAccount = new Account(Money.indonesianRupiah(0),andries);
+        andriesAccount.setPassword(defaultPassword);
         accountsService.create(andriesAccount);
 
         Customer rifki = new Customer("Rifki", "CHIP member");
-        aCustomer.setPassword(defaultPassword);
         customersService.create(rifki);
 
         Account rifkiAccount = new Account(Money.indonesianRupiah(0),rifki);
+        rifkiAccount.setPassword(defaultPassword);
         accountsService.create(rifkiAccount);
 
     }
