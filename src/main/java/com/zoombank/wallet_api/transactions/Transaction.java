@@ -1,8 +1,5 @@
 package com.zoombank.wallet_api.transactions;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zoombank.wallet_api.Money;
 import com.zoombank.wallet_api.accounts.Account;
 
@@ -19,17 +16,14 @@ import java.util.Currency;
  * Represent record of exchange money
  */
 @Entity
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "transactionId")
 public class Transaction {
 
     @ManyToOne(targetEntity = Account.class)
     @NotNull
-    @JsonSerialize(as = Account.class)
     private Account debit;
 
     @ManyToOne(targetEntity = Account.class)
     @NotNull
-    @JsonSerialize(as = Account.class)
     private Account credit;
 
     @Column
