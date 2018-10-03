@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
  * Represent that use the banking service
  */
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "customerId")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "customerId")
 public class Customer {
 
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
