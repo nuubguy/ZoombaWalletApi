@@ -60,7 +60,7 @@ public class AccountsControllerTest {
     }
 
     @Test
-    public void put_updateListOfPayee() throws Exception {
+    public void put_newListOfPayee() throws Exception {
         Customer createdCustomer = createCustomer1InTheRepository();
         Account anAccount = createAccountWith5MilBalanceInRepository(createdCustomer);
         Account account2 = createAccountWith5MilBalanceInRepository(createdCustomer);
@@ -79,6 +79,33 @@ public class AccountsControllerTest {
         Account account = objectMapper.readValue(result.getResponse().getContentAsString(), Account.class);
         Assert.assertEquals(account.getPayees().size(), 1);
         assertEquals(account.getPayees().get(0).getAccountId(), account2.getAccountId());
+    }
+
+    @Test
+    public void put_updateListOfPayee() throws Exception {
+        Customer createdCustomer = createCustomer1InTheRepository();
+        Account anAccount = createAccountWith5MilBalanceInRepository(createdCustomer);
+        Account account2 = createAccountWith5MilBalanceInRepository(createdCustomer);
+        Account account3 = createAccountWith5MilBalanceInRepository(createdCustomer);
+
+        anAccount.getPayees().add(account2);
+        accountsRepository.save(anAccount);
+
+        AccountPayeeRepresentation payLoad = new AccountPayeeRepresentation(anAccount);
+        payLoad.getPayees().clear();
+        AccountSummaryRepresentation payee = new AccountSummaryRepresentation(account3);
+
+        payLoad.getPayees().add(payee);
+
+        String urlTemplate = "/customers/" + createdCustomer.getCustomerId() + "/accounts";
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(urlTemplate)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(payLoad)))
+                .andExpect(status().isAccepted()).andDo(print()).andReturn();
+
+        Account account = objectMapper.readValue(result.getResponse().getContentAsString(), Account.class);
+        Assert.assertEquals(account.getPayees().size(), 1);
+        assertEquals(account.getPayees().get(0).getAccountId(), account3.getAccountId());
     }
 
     @Test
@@ -129,7 +156,7 @@ public class AccountsControllerTest {
     @Test
     public void get_expect404_whenGetBalanceForCustomerWhoDoesNotHaveAccount() throws Exception {
         Customer createdCustomer = createCustomer1InTheRepository();
-        String urlTemplate = "/customers/" + createdCustomer.getCustomerId() + "/accounts/00000001/balance";
+        String urlTemplate = "/customers/" + createdCustomer.getCustomerId() + "/accounts/00000001";
         this.mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate))
                 .andExpect(status().isNotFound());
 
@@ -137,7 +164,8 @@ public class AccountsControllerTest {
 
     @After
     public void cleanUp(){
-        accountsRepository.deleteAll();
+
+        accountsRepository.deleteAllInBatch();
         customersRepository.deleteAll();
     }
 

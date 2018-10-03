@@ -7,9 +7,9 @@ import com.zoombank.wallet_api.customers.CustomerNotFoundException;
 import com.zoombank.wallet_api.customers.CustomersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Optional;
 
 /**
@@ -65,6 +65,7 @@ public class AccountsService extends BaseService<Account> {
 
     }
 
+    @Transactional
     public Account updatePayee(String customerId, AccountPayeeRepresentation accountPayee){
         Account account = this.getById(accountPayee.getAccountId());
 
@@ -72,12 +73,27 @@ public class AccountsService extends BaseService<Account> {
             throw new InvalidAccountException();
         }
 
-        List<Account> accounts = new ArrayList<>();
-        for (int i = 0; i < accountPayee.getPayees().size(); i++) {
-            accounts.add(this.getById(accountPayee.getPayees().get(0).getAccountId()));
+        for (Iterator<Account> iterate = account.getPayees().listIterator(); iterate.hasNext(); ) {
+            Account item = iterate.next();
+            boolean isFound = false;
+            for (int i = 0; i < accountPayee.getPayees().size(); i++) {
+                if(item.getAccountId().equals(accountPayee.getPayees().get(i).getAccountId())){
+                    isFound = true;
+                }
+            }
+            if(!isFound){
+                iterate.remove();
+            }
         }
 
-        account.setPayees(accounts);
+        for (int i = 0; i < accountPayee.getPayees().size(); i++) {
+            Account targetAccount = this.getById(accountPayee.getPayees().get(i).getAccountId());
+            if(!account.getPayees().contains(targetAccount))
+            {
+                account.getPayees().add(targetAccount);
+            }
+        }
+
 
         return this.accountsRepository.save(account);
     }
